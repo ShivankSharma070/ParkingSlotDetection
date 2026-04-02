@@ -10,9 +10,8 @@ Classes: car (class_id=0), free (class_id=1)
 
 import cv2
 import numpy as np
-import requests
-import base64
 import time
+from ultralytics import YOLO
 
 
 class ParkingSlotDetector:
@@ -22,8 +21,6 @@ class ParkingSlotDetector:
     vacant and occupied parking spaces.
     """
 
-    MODEL_NAME = "parking-detection-ewm7h"
-    MODEL_VERSION = 3
     MODEL_TYPE = "YOLOv8s Object Detection"
     CLASSES = {0: "car", 1: "free"}
 
@@ -43,37 +40,41 @@ class ParkingSlotDetector:
         },
     }
 
-    def __init__(self, api_key):
-        self.api_key = api_key
-        self._base_url = "https://detect.roboflow.com"
+    def __init__(self, model_path="model_local/best.pt"):
+        self.model = YOLO(model_path)
 
     def predict(self, image_path, confidence=40, overlap=30):
-        """Run inference on an image file."""
-        with open(image_path, "rb") as f:
-            image_data = base64.b64encode(f.read()).decode("ascii")
-
-        url = f"{self._base_url}/{self.MODEL_NAME}/{self.MODEL_VERSION}"
-        params = {
-            "api_key": self.api_key,
-            "confidence": confidence,
-            "overlap": overlap,
-        }
-
+        """Run local inference on an image file."""
         start = time.time()
-        resp = requests.post(
-            url,
-            params=params,
-            data=image_data,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        
+        results = self.model.predict(
+            source=image_path,
+            conf=confidence / 100.0,
+            iou=overlap / 100.0,
+            verbose=False
         )
         elapsed = time.time() - start
 
-        if resp.status_code != 200:
-            raise Exception(f"Inference failed ({resp.status_code}): {resp.text}")
+        predictions_list = []
+        result = results[0]
+        
+        for box in result.boxes:
+            x, y, w, h = box.xywh[0].tolist()
+            cls_id = int(box.cls[0])
+            conf_val = float(box.conf[0])
+            
+            cls_name = self.CLASSES.get(cls_id, self.model.names.get(cls_id, "unknown"))
+            
+            predictions_list.append({
+                "class": cls_name,
+                "confidence": conf_val,
+                "x": x, "y": y, "width": w, "height": h
+            })
 
-        result = resp.json()
-        result["_inference_time"] = round(elapsed, 3)
-        return result
+        return {
+            "predictions": predictions_list,
+            "_inference_time": round(elapsed, 3)
+        }
 
     def annotate(self, image, predictions, show_labels=True):
         """Draw bounding boxes and labels on the image."""

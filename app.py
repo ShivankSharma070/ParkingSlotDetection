@@ -9,12 +9,8 @@ from PIL import Image
 import os
 import time
 import json
-import tempfile
 from pathlib import Path
 from detector import ParkingSlotDetector
-from dotenv import load_dotenv
-
-load_dotenv()
 
 st.set_page_config(
     page_title="Smart Parking Detection",
@@ -256,14 +252,18 @@ button[data-baseweb="tab"][aria-selected="true"] {
 
 /* ── Misc ── */
 hr { border-color: #1e293b !important; }
-#MainMenu, footer, header { visibility: hidden; }
+#MainMenu, footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
 
 # ─── Helpers ───────────────────────────────────────────────────
-DEFAULT_API_KEY = os.environ.get("ROBOFLOW_API_KEY", "")  # Empty by default without .env
 DATA_DIR = Path("data")
+
+@st.cache_resource
+def get_detector():
+    return ParkingSlotDetector()
+
 
 
 def find_sample_images():
@@ -366,24 +366,6 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown("---")
-    
-    # API Key button state
-    if "show_api" not in st.session_state:
-        st.session_state.show_api = False
-        
-    if st.button("🔑 Custom API Key"):
-        st.session_state.show_api = not st.session_state.show_api
-        
-    if st.session_state.show_api:
-        api_key_input = st.text_input(
-            "Enter API Key", 
-            type="password",
-            placeholder="SWKtw9IhE...",
-            label_visibility="collapsed"
-        )
-        api_key = api_key_input.strip() if api_key_input.strip() else DEFAULT_API_KEY
-    else:
-        api_key = DEFAULT_API_KEY
 
 
 # ─── Main ─────────────────────────────────────────────────────
@@ -469,7 +451,7 @@ if run_btn:
         st.error("Select or upload an image first.")
         st.stop()
 
-    detector = ParkingSlotDetector(api_key)
+    detector = get_detector()
 
     with st.status("Running detection…", expanded=True) as status:
         st.write("Loading image…")
