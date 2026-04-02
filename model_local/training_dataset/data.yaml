@@ -1,0 +1,13 @@
+names:
+- car
+- free
+nc: 2
+roboflow:
+  license: CC BY 4.0
+  project: parking-detection-ewm7h
+  url: https://universe.roboflow.com/model-version2/parking-detection-ewm7h/dataset/3
+  version: 3
+  workspace: model-version2
+test: ../test/images
+train: ../train/images
+val: ../valid/images
