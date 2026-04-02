@@ -12,12 +12,6 @@ ENV/
 env.bak/
 venv.bak/
 
-# Project specifics
-data/
-model_local/best.pt
-model_local/sample*.mp4
-model_local/a.jpg
-
 # OS generated files
 .DS_Store
 .DS_Store?
