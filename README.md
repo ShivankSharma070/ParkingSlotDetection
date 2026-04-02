@@ -78,3 +78,9 @@ python model_local/detect.py --model model_local/best.pt --source data/sample.mp
 
 The YOLOv8 model used in this application was trained on a dataset sourced from Roboflow Universe. All credits for compiling and annotating the original `parking-detection-ewm7h` dataset go to the Roboflow user **[model-version2](https://universe.roboflow.com/model-version2/parking-detection-ewm7h)**. The dataset is provided under the CC BY 4.0 license.
 The dataset used for training is available in the `model_local/training_dataset/` directory.
+
+## Training Metrics
+
+Below are the performance metrics resulting from training the YOLOv8 model on the dataset:
+
+![Training Metrics](model_local/training_metrics.png)
