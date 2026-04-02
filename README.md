@@ -15,7 +15,7 @@ Traditional parking management requires extensive hardware, sensors, and manual 
 ## Prerequisites
 
 - Python 3.8 or higher.
-- A Roboflow API key (for cloud-based detection) or a local YOLO model for local inference.
+- A locally embedded YOLO PyTorch model (`model_local/best.pt`) to run all inference tasks offline.
 
 ## Installation
 
@@ -34,12 +34,6 @@ Traditional parking management requires extensive hardware, sensors, and manual 
 3. **Install the dependencies:**
    ```bash
    pip install -r requirements.txt
-   ```
-
-4. **Environment Variables:**
-   Create a `.env` file in the root directory and add your API key. (Do not commit this file to version control).
-   ```env
-   ROBOFLOW_API_KEY=your_api_key_here
    ```
 
 ## Usage
