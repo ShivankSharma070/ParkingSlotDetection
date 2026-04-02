@@ -21,8 +21,8 @@ Traditional parking management requires extensive hardware, sensors, and manual 
 
 1. **Clone the repository:**
    ```bash
-   git clone <your-repo-url>
-   cd smart-parking-detection
+   git clone https://github.com/ShivankSharma070/ParkingSlotDetection.git
+   cd ParkingSlotDetection
    ```
 
 2. **Set up a virtual environment (optional but recommended):**
